@@ -156,7 +156,24 @@
 }
 
 @media (max-width: 768px) {
+  .hero {
+    padding-top: 4rem;
+  }
+  
+  .hero-container {
+    gap: 1.5rem;
+  }
+
+  .hero-content {
+    gap: 1rem;
+  }
+
   .hero-actions {
     flex-direction: column;
+    margin-top: 0.5rem;
+  }
+  
+  .hero-image-wrapper {
+    max-width: 85%;
   }
 }

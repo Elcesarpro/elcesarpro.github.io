@@ -242,6 +242,24 @@
   .portfolio-grid {
     grid-template-columns: 1fr;
   }
+  
+  /* Prevent horizontal overflow on mobile by moving arrows inside */
+  .left-arrow {
+    left: 5px;
+    width: 44px;
+    height: 44px;
+  }
+  
+  .right-arrow {
+    right: 5px;
+    width: 44px;
+    height: 44px;
+  }
+  
+  .carousel-arrow svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .portfolio-pagination-indicator {
