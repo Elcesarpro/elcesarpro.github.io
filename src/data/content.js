@@ -66,6 +66,7 @@ export const contentData = {
         description: 'Especialista en género urbano, creación de instrumentales y producción sonora completa bajo el sello La G2 Music.',
         iconName: 'Music'
       }
+    
     ]
   },
 
@@ -98,7 +99,7 @@ export const contentData = {
       },
       {
         id: 2,
-        title: 'Rodando con Jefferson',
+        title: 'Rodando con Jefferson Herrera PODCAST',
         category: 'Audiovisual',
         image: 'https://www.youtube.com/watch?v=aF_fXdMbCn0',
         description: 'Producción de Podcast completo.',
@@ -114,7 +115,7 @@ export const contentData = {
         id: 3,
         title: 'La G2 Music',
         category: 'Música',
-        image: 'https://www.youtube.com/watch?v=7hJ00483eN4',
+        image: 'https://youtube.com/shorts/roYPYcmS-H0?si=LditUNdTYHO1wwfy',
         date: '2024-01-10',
         description: 'Producción de instrumentales urbanas.'
       },
