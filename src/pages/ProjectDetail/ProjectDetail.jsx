@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Calendar, User, Briefcase, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { contentData } from '../../data/content';
@@ -7,6 +7,35 @@ import './ProjectDetail.css';
 
 const isYouTubeVideo = (value = '') => /youtube\.com|youtu\.be/i.test(value);
 const isVideoAsset = (value = '') => isYouTubeVideo(value) || /\.(mp4|webm|ogg)$/i.test(value);
+const isPdfAsset = (value = '') => /\.pdf$/i.test(value);
+const isAudiovisualCategory = (value = '') => /audiovisual/i.test(value);
+
+const getMediaMeta = (media, index, fallbackTitle = 'Elemento') => {
+  if (typeof media === 'string') {
+    const isVid = isVideoAsset(media);
+    const isPdf = isPdfAsset(media);
+
+    return {
+      type: isPdf ? 'pdf' : isVid ? 'video' : 'image',
+      url: media,
+      image: null,
+      label: isPdf ? `Documento ${index + 1}` : isVid ? `Video ${index + 1}` : `Imagen ${index + 1}`,
+      embedUrl: isVid ? getVideoEmbedUrl(media) : null,
+    };
+  }
+
+  const rawUrl = media.url || '';
+  const isVid = isVideoAsset(rawUrl);
+  const isPdf = isPdfAsset(rawUrl);
+
+  return {
+    type: media.type || (isPdf ? 'pdf' : isVid ? 'video' : 'image'),
+    url: rawUrl,
+    image: media.image || null,
+    label: media.label || `${fallbackTitle} ${index + 1}`,
+    embedUrl: isVid ? getVideoEmbedUrl(rawUrl) : null,
+  };
+};
 
 const getVideoEmbedUrl = (value = '') => {
   if (!value) return '';
@@ -25,6 +54,7 @@ const getVideoEmbedUrl = (value = '') => {
 const ProjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { portfolio } = contentData;
   const [selectedMedia, setSelectedMedia] = useState(null);
   
@@ -72,14 +102,27 @@ const ProjectDetail = () => {
   const isMainVideo = isVideoAsset(project.image);
   const isVerticalMainVideo = Boolean(project.videoFormat === 'vertical') && isMainVideo;
   const mainVideoEmbed = isMainVideo ? getVideoEmbedUrl(project.image) : null;
+  const shouldShowVisualGallery = !isAudiovisualCategory(project.category);
 
   return (
     <div className="project-detail-page">
       {/* Header section with back button */}
       <div className="project-header-nav container">
-        <Link to="/#portfolio" className="back-link">
+        <button
+          type="button"
+          className="back-link"
+          onClick={() => {
+            if (location.state?.from) {
+              navigate(location.state.from);
+            } else if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              navigate('/#portfolio');
+            }
+          }}
+        >
           <ArrowLeft size={20} /> Volver al Portafolio
-        </Link>
+        </button>
       </div>
 
       <article className="project-article">
@@ -196,7 +239,7 @@ const ProjectDetail = () => {
         </div>
 
         {/* Conditional Gallery Section */}
-        {project.gallery && project.gallery.length > 0 && (
+        {shouldShowVisualGallery && project.gallery && project.gallery.length > 0 && (
           <motion.div 
             className="project-gallery section"
             initial={{ opacity: 0, y: 30 }}
@@ -208,47 +251,49 @@ const ProjectDetail = () => {
               <h2 className="heading-md mb-4">Galería <span className="text-accent">Visual</span></h2>
               <div className="gallery-grid">
                 {project.gallery.map((media, index) => {
-                  const isVid = isVideoAsset(media);
-                  const embedUrl = isVid ? getVideoEmbedUrl(media) : null;
+                  const mediaMeta = getMediaMeta(media, index, project.title);
 
                   return (
                     <button
                       key={index}
                       type="button"
                       className="gallery-item"
-                      onClick={() => setSelectedMedia({ index, items: project.gallery.map((item, itemIndex) => {
-                        const itemIsVid = isVideoAsset(item);
-                        const itemEmbedUrl = itemIsVid ? getVideoEmbedUrl(item) : null;
-
-                        return {
-                          type: itemIsVid ? 'video' : 'image',
-                          url: item,
-                          embedUrl: itemEmbedUrl,
-                        };
-                      }) })}
-                      aria-label={isVid ? `Ver video ${index + 1}` : `Ver imagen ${index + 1}`}
+                      onClick={() => setSelectedMedia({ index, items: project.gallery.map((item, itemIndex) => getMediaMeta(item, itemIndex, project.title)) })}
+                      aria-label={mediaMeta.type === 'pdf' ? `Abrir ${mediaMeta.label}` : `Ver ${mediaMeta.label}`}
                     >
-                      {isVid && isYouTubeVideo(media) ? (
+                      {mediaMeta.type === 'video' && isYouTubeVideo(mediaMeta.url) ? (
                         <div className="video-container">
                           <iframe
-                            src={embedUrl}
+                            src={mediaMeta.embedUrl}
                             title={`${project.title} gallery video ${index}`}
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
                           ></iframe>
                         </div>
-                      ) : isVid ? (
+                      ) : mediaMeta.type === 'video' ? (
                         <div className="video-container">
                           <video
-                            src={media}
+                            src={mediaMeta.url}
                             controls
                             playsInline
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           />
                         </div>
+                      ) : mediaMeta.type === 'pdf' ? (
+                        <div className="gallery-pdf-card">
+                          {mediaMeta.image ? (
+                            <img src={mediaMeta.image} alt={mediaMeta.label} className="gallery-pdf-image" />
+                          ) : (
+                            <div className="gallery-pdf-icon">PDF</div>
+                          )}
+                          <div className="gallery-pdf-info">
+                            <span>Documento</span>
+                            <strong>{mediaMeta.label}</strong>
+                          </div>
+                        </div>
                       ) : (
-                        <img src={media} alt={`${project.title} gallery file ${index}`} className="gallery-img" />
+                        <img src={mediaMeta.url} alt={`${project.title} gallery file ${index}`} className="gallery-img" />
                       )}
                     </button>
                   );
@@ -276,6 +321,13 @@ const ProjectDetail = () => {
                   allowFullScreen
                 ></iframe>
               </div>
+            ) : selectedMedia.items[selectedMedia.index].type === 'pdf' ? (
+              <iframe
+                src={selectedMedia.items[selectedMedia.index].url}
+                title={selectedMedia.items[selectedMedia.index].label}
+                className="media-modal-pdf"
+                loading="lazy"
+              />
             ) : (
               <img src={selectedMedia.items[selectedMedia.index].url} alt="Vista ampliada del proyecto" className="media-modal-image" />
             )}

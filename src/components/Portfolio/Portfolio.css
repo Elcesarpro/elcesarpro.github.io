@@ -213,6 +213,49 @@
   font-size: 0.9rem;
   color: var(--color-text-muted);
   margin-bottom: 1rem;
+  text-align: justify;
+}
+
+.portfolio-content {
+  transform: translateY(20px) translateZ(0);
+  transition: transform 0.25s ease;
+  width: 100%;
+  text-align: justify;
+}
+
+.portfolio-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.portfolio-action-link,
+.portfolio-pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transform: translateY(0);
+  transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.portfolio-action-link:hover,
+.portfolio-pdf-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-2px);
+}
+
+.portfolio-pdf-btn {
+  background: linear-gradient(135deg, rgba(230, 57, 70, 0.18), rgba(230, 57, 70, 0.28));
 }
 
 .portfolio-link {
@@ -230,6 +273,72 @@
 
 .portfolio-link:hover {
   background-color: var(--color-accent-hover);
+}
+
+.portfolio-pdf-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(2, 6, 23, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+.portfolio-pdf-modal {
+  width: min(1100px, 100%);
+  height: min(82vh, 840px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #f8fafc;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+}
+
+.portfolio-pdf-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+}
+
+.portfolio-pdf-modal-kicker {
+  margin: 0 0 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #7c3aed;
+}
+
+.portfolio-pdf-modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.portfolio-pdf-close {
+  border: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.portfolio-pdf-modal iframe {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  background: #fff;
 }
 
 .portfolio-carousel-wrapper {

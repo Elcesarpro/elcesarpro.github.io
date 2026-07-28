@@ -43,7 +43,7 @@ const About = () => {
             <h2 className="heading-md">
               {about.sectionTitle} <span className="text-accent">{about.sectionTitleHighlight}</span>
             </h2>
-            <p className="text-lg about-description">
+            <p className="about-description">
               {about.descriptionParagraph1}
             </p>
             <p className="about-description">

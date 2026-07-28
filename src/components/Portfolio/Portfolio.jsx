@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ExternalLink, ChevronLeft, ChevronRight, FileText, X } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import { contentData } from "../../data/content";
 import "./Portfolio.css";
 
@@ -9,17 +9,29 @@ const isYouTubeVideo = (value = "") => /youtube\.com|youtu\.be/i.test(value);
 const isVideoAsset = (value = "") => isYouTubeVideo(value) || /\.(mp4|webm|ogg)$/i.test(value);
 
 const Portfolio = () => {
+  const location = useLocation();
   const [filter, setFilter] = useState("All");
   const [subFilter, setSubFilter] = useState("All");
   const [sortOrder, setSortOrder] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedPdf, setSelectedPdf] = useState(null);
   const itemsPerPage = 6;
   const { portfolio } = contentData;
 
   const categoryOptions = portfolio.categories.map((category) =>
     typeof category === "string" ? { name: category, subcategories: [] } : category
   );
-  const activeCategory = categoryOptions.find((category) => category.name === filter) || categoryOptions[0];
+
+  const getCategoryConfig = (value) => {
+    const normalizedValue = value?.trim().toLowerCase();
+    return (
+      categoryOptions.find((category) => category.name?.trim().toLowerCase() === normalizedValue) ||
+      categoryOptions[0] ||
+      { name: "All", subcategories: [] }
+    );
+  };
+
+  const activeCategory = getCategoryConfig(filter);
 
   // Reset page when filter or sort changes
   const handleFilterChange = (newFilter) => {
@@ -102,7 +114,7 @@ const Portfolio = () => {
             </motion.div>
 
             <AnimatePresence mode="wait">
-              {filter !== "All" && activeCategory.subcategories.length > 0 && (
+              {filter !== "All" && Array.isArray(activeCategory?.subcategories) && activeCategory.subcategories.length > 0 && (
                 <motion.div
                   key={`${filter}-subfilters`}
                   initial={{ opacity: 0, y: 6 }}
@@ -233,36 +245,65 @@ const Portfolio = () => {
                         <span className="image-tag">{project.image}</span>
                       )}
                     </div>
-                    <div
-                      className="portfolio-overlay"
-                      style={{
-                        pointerEvents: isVideoMedia && isYouTubeVideo(project.image) ? "none" : "auto",
-                      }}
-                    >
+                    <div className="portfolio-overlay">
                       {isVideoMedia && isYouTubeVideo(project.image) ? (
                         <div className="portfolio-content">
                           <span className="portfolio-category">{project.category}</span>
                           <h3 className="portfolio-title">{project.title}</h3>
                           <p className="portfolio-desc">{project.description}</p>
-                          <Link 
-                            to={`/project/${project.id}`} 
-                            className="btn btn-primary" 
-                            style={{ pointerEvents: 'auto', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', fontSize: '0.9rem' }}
-                          >
-                            Ver Detalles <ExternalLink size={16} />
-                          </Link>
+                          <div className="portfolio-actions">
+                            <Link 
+                              to={`/project/${project.id}`} 
+                              className="portfolio-action-link"
+                              state={{ from: `${location.pathname}${location.search}${location.hash}` }}
+                            >
+                              Ver detalles <ExternalLink size={16} />
+                            </Link>
+                            {project.pdfUrl && (
+                              <button
+                                type="button"
+                                className="portfolio-pdf-btn"
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  event.stopPropagation();
+                                  setSelectedPdf(project);
+                                }}
+                              >
+                                <FileText size={16} /> Abrir PDF
+                              </button>
+                            )}
+                          </div>
                         </div>
                       ) : (
-                        <Link to={`/project/${project.id}`} className="portfolio-content" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+                        <div className="portfolio-content">
                           <span className="portfolio-category">
                             {project.category}
                           </span>
                           <h3 className="portfolio-title">{project.title}</h3>
                           <p className="portfolio-desc">{project.description}</p>
-                          <span className="portfolio-link">
-                            <ExternalLink size={20} />
-                          </span>
-                        </Link>
+                          <div className="portfolio-actions">
+                            <Link
+                              to={`/project/${project.id}`}
+                              className="portfolio-action-link"
+                              state={{ from: `${location.pathname}${location.search}${location.hash}` }}
+                            >
+                              Ver detalles <ExternalLink size={16} />
+                            </Link>
+                            {project.pdfUrl && (
+                              <button
+                                type="button"
+                                className="portfolio-pdf-btn"
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  event.stopPropagation();
+                                  setSelectedPdf(project);
+                                }}
+                              >
+                                <FileText size={16} /> Abrir PDF
+                              </button>
+                            )}
+                          </div>
+                        </div>
                       )}
                     </div>
                   </motion.div>
@@ -291,6 +332,42 @@ const Portfolio = () => {
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {selectedPdf && (
+          <motion.div
+            className="portfolio-pdf-modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedPdf(null)}
+          >
+            <motion.div
+              className="portfolio-pdf-modal"
+              initial={{ y: 24, opacity: 0, scale: 0.98 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 20, opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.22 }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="portfolio-pdf-modal-header">
+                <div>
+                  <p className="portfolio-pdf-modal-kicker">Documento</p>
+                  <h3>{selectedPdf.title}</h3>
+                </div>
+                <button type="button" className="portfolio-pdf-close" onClick={() => setSelectedPdf(null)}>
+                  <X size={18} />
+                </button>
+              </div>
+              <iframe
+                src={selectedPdf.pdfUrl}
+                title={selectedPdf.title}
+                loading="lazy"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
