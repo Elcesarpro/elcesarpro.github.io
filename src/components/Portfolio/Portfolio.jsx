@@ -255,7 +255,13 @@ const Portfolio = () => {
                             <Link 
                               to={`/project/${project.id}`} 
                               className="portfolio-action-link"
-                              state={{ from: `${location.pathname}${location.search}${location.hash}` }}
+                              state={{
+                                returnTo: {
+                                  pathname: location.pathname,
+                                  hash: location.hash || '#portfolio',
+                                  scrollY: window.scrollY,
+                                },
+                              }}
                             >
                               Ver detalles <ExternalLink size={16} />
                             </Link>
@@ -285,7 +291,13 @@ const Portfolio = () => {
                             <Link
                               to={`/project/${project.id}`}
                               className="portfolio-action-link"
-                              state={{ from: `${location.pathname}${location.search}${location.hash}` }}
+                              state={{
+                                returnTo: {
+                                  pathname: location.pathname,
+                                  hash: location.hash || '#portfolio',
+                                  scrollY: window.scrollY,
+                                },
+                              }}
                             >
                               Ver detalles <ExternalLink size={16} />
                             </Link>

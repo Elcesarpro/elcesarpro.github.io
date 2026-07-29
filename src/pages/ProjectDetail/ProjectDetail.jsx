@@ -66,6 +66,31 @@ const ProjectDetail = () => {
     window.scrollTo(0, 0);
   }, [id]);
 
+  const handleBackToPortfolio = () => {
+    const returnTo = location.state?.returnTo;
+
+    if (returnTo) {
+      navigate(returnTo.pathname || '/', {
+        state: {
+          scrollY: returnTo.scrollY ?? window.scrollY,
+          hash: returnTo.hash || '#portfolio',
+        },
+      });
+      return;
+    }
+
+    if (location.state?.from) {
+      navigate(location.state.from);
+      return;
+    }
+
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      navigate('/#portfolio');
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (!selectedMedia) return;
@@ -111,15 +136,7 @@ const ProjectDetail = () => {
         <button
           type="button"
           className="back-link"
-          onClick={() => {
-            if (location.state?.from) {
-              navigate(location.state.from);
-            } else if (window.history.length > 1) {
-              window.history.back();
-            } else {
-              navigate('/#portfolio');
-            }
-          }}
+          onClick={handleBackToPortfolio}
         >
           <ArrowLeft size={20} /> Volver al Portafolio
         </button>
