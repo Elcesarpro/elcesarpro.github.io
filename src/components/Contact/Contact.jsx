@@ -31,7 +31,16 @@ const Contact = () => {
       otro: 'Otro'
     }[formData.service] || 'Otro';
 
-    const message = `Hola, mi nombre es ${formData.name || '...'}. Mi correo es ${formData.email || '...'}. Estoy interesado en ${serviceLabel}. Mensaje: ${formData.message || '...'}`;
+    const message = [
+      `Hola, soy ${formData.name || '...'}.`,
+      ``,
+      `Correo: ${formData.email || '...'}`,
+      `Servicio de interés: ${serviceLabel}`,
+      ``,
+      `Mensaje:`,
+      `${formData.message || '...'}`
+    ].join('\n');
+
     const whatsappNumber = contact.phoneNumber.replace(/\D/g, '');
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
