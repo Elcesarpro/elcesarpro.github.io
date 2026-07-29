@@ -613,7 +613,7 @@ export const contentData = {
         title: 'Producto | Publicidad',
         category: 'Fotografía',
         subcategory: 'Producto',
-        image: "/images/DARU2.png",
+        image: "/images/DARU6.jpg",
         description: 'Fotografía de producto y publicidad de alto impacto visual.',
         
         // --- PÁGINA DETALLE ---
@@ -624,8 +624,8 @@ export const contentData = {
         externalLink: '',
         gallery: [
           '/images/DARU1.png',
-          '/images/DARU2.png',
-          '/images/DARU3.jpg',
+          '/images/DARU12.jpg',
+          '/images/DARU13.jpg',
           '/images/DARU4.jpg',
           '/images/DARU5.jpg',
           '/images/DARU6.jpg',
