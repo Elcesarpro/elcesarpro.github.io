@@ -779,7 +779,7 @@ export const contentData = {
     instagramLink: "https://www.instagram.com/elcesarpro",
     locationLabel: "Ubicación",
     locationText: "Cali | Colombia",
-    formButtonText: "Enviar Mensaje"
+    formButtonText: "Enviar mensaje"
   },
 
   // Footer

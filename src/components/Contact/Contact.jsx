@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, Instagram, MapPin, Send } from 'lucide-react';
 import { contentData } from '../../data/content';
@@ -6,6 +6,37 @@ import './Contact.css';
 
 const Contact = () => {
   const { contact } = contentData;
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    service: 'audiovisual',
+    message: ''
+  });
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const serviceLabel = {
+      audiovisual: 'Producción Audiovisual',
+      foto: 'Fotografía',
+      grafico: 'Diseño Gráfico',
+      web: 'Diseño Web',
+      social: 'Social Media',
+      musica: 'Producción Musical',
+      otro: 'Otro'
+    }[formData.service] || 'Otro';
+
+    const message = `Hola, mi nombre es ${formData.name || '...'}. Mi correo es ${formData.email || '...'}. Estoy interesado en ${serviceLabel}. Mensaje: ${formData.message || '...'}`;
+    const whatsappNumber = contact.phoneNumber.replace(/\D/g, '');
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <section className="section contact-section" id="contact">
@@ -76,20 +107,20 @@ const Contact = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
+            <form className="contact-form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="name">Nombre</label>
-                <input type="text" id="name" placeholder="Tu nombre" required />
+                <input type="text" id="name" value={formData.name} onChange={handleChange} placeholder="Tu nombre" required />
               </div>
               
               <div className="form-group">
                 <label htmlFor="email">Email</label>
-                <input type="email" id="email" placeholder="tu@email.com" required />
+                <input type="email" id="email" value={formData.email} onChange={handleChange} placeholder="tu@email.com" required />
               </div>
               
               <div className="form-group">
                 <label htmlFor="service">Servicio de Interés</label>
-                <select id="service">
+                <select id="service" value={formData.service} onChange={handleChange}>
                   <option value="audiovisual">Producción Audiovisual</option>
                   <option value="foto">Fotografía</option>
                   <option value="grafico">Diseño Gráfico</option>
@@ -102,7 +133,7 @@ const Contact = () => {
               
               <div className="form-group">
                 <label htmlFor="message">Mensaje</label>
-                <textarea id="message" rows="5" placeholder="Cuéntame sobre tu proyecto..." required></textarea>
+                <textarea id="message" rows="5" value={formData.message} onChange={handleChange} placeholder="Cuéntame sobre tu proyecto..." required></textarea>
               </div>
               
               <button type="submit" className="btn btn-primary submit-btn">
