@@ -220,7 +220,6 @@
   transform: translateY(20px) translateZ(0);
   transition: transform 0.25s ease;
   width: 100%;
-  text-align: justify;
 }
 
 .portfolio-actions {

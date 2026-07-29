@@ -21,7 +21,7 @@ const About = () => {
             <div className="about-image-wrapper">
               <div className="about-image-placeholder">
                 {about.aboutImage?.startsWith('http') || about.aboutImage?.startsWith('/') ? (
-                  <img src={about.aboutImage} alt="Perfil" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '20px' }} />
+                  <img src={about.aboutImage} alt="Perfil" className="about-image-photo" />
                 ) : (
                   <span className="placeholder-text-small">{about.aboutImage}</span>
                 )}

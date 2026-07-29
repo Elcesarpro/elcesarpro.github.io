@@ -744,7 +744,7 @@ export const contentData = {
 
   // Sección: Sobre Mí (Perfil)
   about: {
-    aboutImage: "/images/img-ec.jpg",
+    aboutImage: "/images/ECP3.png",
     badgeYears: "+9",
     badgeText: "Años de\nExperiencia",
     sectionTitle: "Un poco más sobre",
